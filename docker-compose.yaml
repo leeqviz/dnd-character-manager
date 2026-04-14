@@ -1,28 +1,42 @@
 services:
-  app:
+  api:
+    container_name: DnD-Character-Manager-API
     build:
       context: .
       dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: on-failure
     ports:
       - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
     develop:
       watch:
-        - action: sync
+        - action: sync+restart
           path: .
           target: /app
-          ignore:
-            - .venv/
         - action: rebuild
           path: pyproject.toml
+
   db:
-    image: postgres:16
+    container_name: DnD-Character-Manager-DB
+    image: postgres:17.9
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - db_data:/var/lib/postgresql/data
+    restart: on-failure
     ports:
       - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   db_data:
