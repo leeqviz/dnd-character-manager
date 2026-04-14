@@ -10,7 +10,7 @@ def install(c):
 @task
 def dev(c, port=PORT):
     """Запуск сервера"""
-    c.run(f"uv run fastapi dev main.py --port {port}", env={"PYTHONIOENCODING": "utf-8"})
+    c.run(f"uv run fastapi dev src/main.py --port {port}", env={"PYTHONIOENCODING": "utf-8"})
 
 @task
 def test(c):

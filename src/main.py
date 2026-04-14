@@ -9,7 +9,7 @@ from src.db.models import User
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     print("server is starting...")
     await init_db()
     yield
