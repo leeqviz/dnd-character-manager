@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.db import init_db
-from src.routers.users import users_router
+from src.routers import api_router
 
 
 @asynccontextmanager
@@ -28,7 +28,7 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
-app.include_router(users_router, prefix="/users", tags=["users"])
+app.include_router(api_router, prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn
