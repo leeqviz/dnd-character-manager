@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
+from pydantic import BaseModel
 from sqlalchemy import DateTime, Uuid, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -21,3 +22,16 @@ class User(Base):
     
     def __repr__(self):
         return f"<User(id={self.id}, name={self.name}, email={self.email})>"
+    
+class UserOut(BaseModel):
+    id: uuid.UUID
+    name: str
+    email: str
+    
+    class Config:
+        from_attributes = True
+        
+class UserIn(BaseModel):
+    name: str
+    email: str
+    password: str
