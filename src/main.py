@@ -68,3 +68,7 @@ async def delete_user(user_id: uuid.UUID, db: AsyncSession = Depends(get_async_s
 
 
 app.include_router(router, prefix="/api", tags=["api"])
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
