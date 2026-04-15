@@ -1,14 +1,11 @@
-import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
-from pydantic import BaseModel
-from sqlalchemy import DateTime, Uuid, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import DateTime, func
+from sqlalchemy.orm import Mapped, mapped_column
 
-timestamp_with_tz = datetime.now(timezone.utc)
+from src.db import Base
+from src.utils.timestamp import timestamp_with_tz
 
-class Base(DeclarativeBase):
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4())
 
 class User(Base):
     __tablename__ = "users"
@@ -21,16 +18,3 @@ class User(Base):
     
     def __repr__(self):
         return f"<User(id={self.id}, name={self.name}, email={self.email})>"
-    
-class UserOut(BaseModel):
-    id: uuid.UUID
-    name: str
-    email: str
-    
-    class Config:
-        from_attributes = True
-        
-class UserIn(BaseModel):
-    name: str
-    email: str
-    password: str

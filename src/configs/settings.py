@@ -32,3 +32,4 @@ class Settings(BaseSettings):
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{path}/{self.POSTGRES_DB}"
 
 settings = Settings()
+    
