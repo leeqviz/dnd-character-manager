@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +17,14 @@ async def lifespan(_: FastAPI):
     print("server is stopping...")
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],      # Allows all origins
+    allow_methods=["*"],      # Allows all methods
+    allow_headers=["*"],      # Allows all headers
+    allow_credentials=True,   # Allows cookies
+)
 
 @app.get("/")
 async def root():
