@@ -12,7 +12,7 @@ class User(Base):
 
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
-    hashed_password: Mapped[str] = mapped_column(nullable=False)
+    password: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=timestamp_with_tz, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=timestamp_with_tz, onupdate=timestamp_with_tz, server_default=func.now())
     
