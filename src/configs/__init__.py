@@ -1,9 +1,30 @@
 from os import path
 
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class AppConfig(BaseModel):
+    host: str = "127.0.0.1"
+    port: int = 8000
+    reload: bool = True
+    entrypoint: str = "main:app"
+    
+class ApiConfig(BaseModel):
+    prefix: str = "/api"
+    message: str = "Welcome to DnD Character Manager API"
+    
+class CORSConfig(BaseModel):
+    origins: list = ["*"]
+    methods: list = ["*"]
+    headers: list = ["*"]
+    credentials: bool = True
+
+
 class Settings(BaseSettings):
+    app: AppConfig = AppConfig()
+    api: ApiConfig = ApiConfig()
+    cors: CORSConfig = CORSConfig()
 
     POSTGRES_PORT: str | None = None
     POSTGRES_HOST: str | None = None
