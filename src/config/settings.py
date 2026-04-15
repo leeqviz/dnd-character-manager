@@ -5,12 +5,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
 
-    POSTGRES_PORT: str
-    POSTGRES_HOST: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    POSTGRES_SERVICE: str
+    POSTGRES_PORT: str | None = None
+    POSTGRES_HOST: str | None = None
+    POSTGRES_USER: str | None = None
+    POSTGRES_PASSWORD: str | None = None
+    POSTGRES_DB: str | None = None
+    POSTGRES_SERVICE: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env", 
