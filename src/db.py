@@ -1,7 +1,14 @@
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+import uuid
 
-from src.config.settings import settings
-from src.db.models import Base
+from sqlalchemy import Uuid
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+from src.configs.settings import settings
+
+
+class Base(DeclarativeBase):
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4())
 
 engine = create_async_engine(
     url=settings.database_url,
