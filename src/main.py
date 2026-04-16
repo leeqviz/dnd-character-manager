@@ -4,15 +4,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .configs import settings
-from .db import postgresConnection
+from .db import psql_conn
 from .routers import api_router
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    await postgresConnection.init()
+    await psql_conn.init()
     yield
-    await postgresConnection.dispose()
+    await psql_conn.dispose()
 
 app = FastAPI(lifespan=lifespan)
 
@@ -26,7 +26,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": settings.api.message}
+    return {"message": "Hello World"}
 
 app.include_router(api_router, prefix=settings.api.prefix)
 

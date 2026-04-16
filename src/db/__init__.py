@@ -47,7 +47,7 @@ class DatabaseConnection:
         async with self.session_maker() as session:
             yield session
             
-postgresConnection = DatabaseConnection(
+psql_conn = DatabaseConnection(
     url=settings.postgres.url,
     echo=settings.postgres.echo,
     echo_pool=settings.postgres.echo_pool,
