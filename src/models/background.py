@@ -8,7 +8,8 @@ from .mixins.uuid_pk import UUID_PK_Mixin
 
 if TYPE_CHECKING:
     from src.models.character import Character
-    
+
+
 class Background(UUID_PK_Mixin, Base):
     __tablename__ = "backgrounds"
 

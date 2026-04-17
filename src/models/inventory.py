@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from src.models.character import Character
     from src.models.item import Item
 
+
 class Inventory(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
     __tablename__ = "inventories"
 
@@ -26,9 +27,15 @@ class Inventory(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
         ForeignKey("items.id", ondelete="RESTRICT"),
         primary_key=True,
     )
-    quantity: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
-    equipped: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
-    attuned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    quantity: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=1, server_default="1"
+    )
+    equipped: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
+    attuned: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
     notes: Mapped[Optional[str]] = mapped_column(Text)
 
     character: Mapped["Character"] = relationship(back_populates="inventories")

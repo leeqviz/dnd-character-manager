@@ -11,9 +11,10 @@ class UserSchema(BaseModel):
 
 class UserOut(UserSchema):
     id: UUID
-    
+
     # optional
     model_config = ConfigDict(from_attributes=True)
-        
+
+
 class UserIn(UserSchema):
     pass
