@@ -2,6 +2,7 @@ from uuid import UUID, uuid4
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core import AppException
 from src.models.user import User
 from src.repositories.users import UsersRepository
 from src.schemas.user import UserIn, UserOut
@@ -31,7 +32,7 @@ class UsersService:
 
         db_user = await self.repo.get_by_id(user_id)
         if not db_user:
-            raise Exception("User not found")
+            raise AppException("User not found")
 
         db_user.name = user.name if user.name is not None else db_user.name
         db_user.email = user.email if user.email is not None else db_user.email
@@ -44,7 +45,7 @@ class UsersService:
     async def delete(self, user_id: UUID):
         db_user = await self.repo.get_by_id(user_id)
         if not db_user:
-            raise Exception("User not found")
+            raise AppException("User not found")
 
         await self.repo.delete(db_user)
         await self.session.commit()

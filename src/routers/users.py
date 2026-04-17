@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core import AppException
 from src.db import psql_conn
 from src.schemas.user import UserIn, UserOut
 from src.services.users import UsersService
@@ -46,7 +47,7 @@ async def update_user(
 ) -> UserOut:
     try:
         return await users_service.update(user_id, user)
-    except Exception as exc:
+    except AppException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         ) from exc
@@ -58,7 +59,7 @@ async def delete_user(
 ):
     try:
         await users_service.delete(user_id)
-    except Exception as exc:
+    except AppException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         ) from exc
