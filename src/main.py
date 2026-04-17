@@ -1,9 +1,10 @@
-import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+
+from src.handlers import global_exception_handler
+from src.middlewares import LogRequestMiddleware, ResponseTimeMiddleware
 
 from .configs import settings
 from .db import psql_conn
@@ -27,6 +28,10 @@ app.add_middleware(
     allow_credentials=settings.cors.credentials,  # Allows cookies
 )
 
+app.add_middleware(LogRequestMiddleware)
+
+app.add_middleware(ResponseTimeMiddleware)  # will be the first
+
 
 @app.get("/")
 async def root():
@@ -35,21 +40,7 @@ async def root():
 
 app.include_router(api_router, prefix=settings.api.prefix)
 
-logger = logging.getLogger(__name__)
-
-
-@app.exception_handler(Exception)
-async def global_exception_handler(_: Request, exc: Exception):
-    logger.error(f"Global error caught: {exc}", exc_info=True)
-
-    return JSONResponse(
-        status_code=500,
-        content={
-            "status": "error",
-            "message": "Internal Server Error",
-            "details": str(exc) if app.debug else None,
-        },
-    )
+app.add_exception_handler(Exception, global_exception_handler)
 
 
 if __name__ == "__main__":

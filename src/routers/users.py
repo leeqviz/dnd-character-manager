@@ -17,31 +17,33 @@ def get_users_service(
     return UsersService(session)
 
 
-@users_router.get("/", response_model=list[UserOut])
-async def get_users(users_service: Annotated[UsersService, Depends(get_users_service)]):
+@users_router.get("/")
+async def get_users(
+    users_service: Annotated[UsersService, Depends(get_users_service)],
+) -> list[UserOut]:
     return await users_service.get_all()
 
 
-@users_router.get("/{user_id}", response_model=UserOut)
+@users_router.get("/{user_id}")
 async def get_user(
     user_id: UUID, users_service: Annotated[UsersService, Depends(get_users_service)]
-):
+) -> UserOut:
     return await users_service.get_by_id(user_id)
 
 
-@users_router.post("/", response_model=UserOut, status_code=status.HTTP_201_CREATED)
+@users_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(
     user: UserIn, users_service: Annotated[UsersService, Depends(get_users_service)]
-):
+) -> UserOut:
     return await users_service.create(user)
 
 
-@users_router.patch("/{user_id}", response_model=UserOut)
+@users_router.patch("/{user_id}")
 async def update_user(
     user_id: UUID,
     user: UserIn,
     users_service: Annotated[UsersService, Depends(get_users_service)],
-):
+) -> UserOut:
     try:
         return await users_service.update(user_id, user)
     except Exception as exc:
