@@ -7,6 +7,7 @@ from .base import Base
 from .mixins.uuid_pk import UUID_PK_Mixin
 
 if TYPE_CHECKING:
+    from src.models.ability import Ability
     from src.models.character import Character
 
 
@@ -19,6 +20,10 @@ class Race(UUID_PK_Mixin, Base):
     description: Mapped[str | None] = mapped_column(Text)
 
     characters: Mapped[list["Character"]] = relationship(
+        back_populates="race",
+        passive_deletes=True,
+    )
+    abilities: Mapped[list["Ability"]] = relationship(
         back_populates="race",
         passive_deletes=True,
     )

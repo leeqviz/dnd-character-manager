@@ -51,7 +51,7 @@ class CharacterSpell(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
     character: Mapped["Character"] = relationship(back_populates="character_spells")
     spell: Mapped["Spell"] = relationship(back_populates="character_spells")
     archetype: Mapped[Optional["Archetype"]] = relationship(
-        back_populates="character_archetypes"
+        back_populates="character_spells"
     )
 
     __table_args__ = (

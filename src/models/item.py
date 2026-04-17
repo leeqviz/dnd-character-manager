@@ -30,5 +30,5 @@ class Item(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
 
     __table_args__ = (
         CheckConstraint("weight is null or weight >= 0", name="ck_items_weight"),
-        CheckConstraint("cost_gp is null or cost_gp >= 0", name="ck_items_cost_gp"),
+        CheckConstraint("price is null or price >= 0", name="ck_items_price"),
     )

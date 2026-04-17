@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import Boolean, ForeignKey, Integer, Text, Uuid
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -40,3 +40,7 @@ class CharacterItem(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
 
     character: Mapped["Character"] = relationship(back_populates="character_items")
     item: Mapped["Item"] = relationship(back_populates="character_items")
+
+    __table_args__ = (
+        CheckConstraint("quantity >= 0", name="ck_character_items_quantity"),
+    )

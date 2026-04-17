@@ -49,7 +49,7 @@ class CharacterArchetype(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base
             ["archetype_id"],
             ["archetypes.id"],
             ondelete="SET NULL",
-            name="fk_characters_classes_subclass_class",
+            name="fk_characters_archetypes",
         ),
-        CheckConstraint("class_level >= 1", name="ck_characters_classes_level"),
+        CheckConstraint("level >= 1", name="ck_characters_archetypes_level"),
     )

@@ -28,7 +28,7 @@ class CharacterStat(Created_At_Mixin, Updated_At_Mixin, Base):
         unique=True,
     )
 
-    character: Mapped["Character"] = relationship(back_populates="stat")
+    character: Mapped["Character"] = relationship(back_populates="character_stat")
 
     __table_args__ = (
         CheckConstraint(
