@@ -14,8 +14,8 @@ if TYPE_CHECKING:
     from src.models.item import Item
 
 
-class Inventory(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
-    __tablename__ = "inventories"
+class CharacterItem(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
+    __tablename__ = "character_items"
 
     character_id: Mapped[UUID] = mapped_column(
         Uuid,
@@ -38,5 +38,5 @@ class Inventory(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
     )
     notes: Mapped[str | None] = mapped_column(Text)
 
-    character: Mapped["Character"] = relationship(back_populates="inventories")
-    item: Mapped["Item"] = relationship(back_populates="inventories")
+    character: Mapped["Character"] = relationship(back_populates="character_items")
+    item: Mapped["Item"] = relationship(back_populates="character_items")

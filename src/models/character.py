@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, Integer, Uuid
+from sqlalchemy import CheckConstraint, ForeignKey, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from . import Base
@@ -9,7 +9,8 @@ from .mixins import Created_At_Mixin, Updated_At_Mixin, UUID_PK_Mixin
 
 if TYPE_CHECKING:
     from src.models.background import Background
-    from src.models.inventory import Inventory
+    from src.models.character_item import CharacterItem
+    from src.models.character_stat import CharacterStat
     from src.models.race import Race
     from src.models.user import User
 
@@ -41,27 +42,24 @@ class Character(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
         uselist=False,
         cascade="all, delete-orphan",
     )
-    inventories: Mapped[list["Inventory"]] = relationship(
+    character_items: Mapped[list["CharacterItem"]] = relationship(
         back_populates="character",
         cascade="all, delete-orphan",
     )
 
-
-class CharacterStat(Created_At_Mixin, Updated_At_Mixin, Base):
-    __tablename__ = "character_stats"
-
-    strength: Mapped[int] = mapped_column(Integer, nullable=False)
-    dexterity: Mapped[int] = mapped_column(Integer, nullable=False)
-    constitution: Mapped[int] = mapped_column(Integer, nullable=False)
-    intelligence: Mapped[int] = mapped_column(Integer, nullable=False)
-    wisdom: Mapped[int] = mapped_column(Integer, nullable=False)
-    charisma: Mapped[int] = mapped_column(Integer, nullable=False)
-
-    character_id: Mapped[UUID] = mapped_column(
-        Uuid,
-        ForeignKey("characters.id", ondelete="CASCADE"),
-        primary_key=True,
-        unique=True,
+    __table_args__ = (
+        CheckConstraint("level >= 1", name="ck_characters_level"),
+        CheckConstraint("experience >= 0", name="ck_characters_experience"),
+        CheckConstraint(
+            "proficiency_bonus >= 2", name="ck_characters_proficiency_bonus"
+        ),
+        CheckConstraint("max_hp is null or max_hp >= 0", name="ck_characters_max_hp"),
+        CheckConstraint(
+            "current_hp is null or current_hp >= 0", name="ck_characters_current_hp"
+        ),
+        CheckConstraint("temp_hp >= 0", name="ck_characters_temp_hp"),
+        CheckConstraint("speed is null or speed > 0", name="ck_characters_speed"),
+        CheckConstraint(
+            "armor_class is null or armor_class >= 0", name="ck_characters_ac"
+        ),
     )
-
-    character: Mapped["Character"] = relationship(back_populates="stat")

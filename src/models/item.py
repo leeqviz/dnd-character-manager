@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Numeric, Text
+from sqlalchemy import CheckConstraint, Numeric, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -10,7 +10,7 @@ from .mixins.updated_at import Updated_At_Mixin
 from .mixins.uuid_pk import UUID_PK_Mixin
 
 if TYPE_CHECKING:
-    from src.models.inventory import Inventory
+    from src.models.character_item import CharacterItem
 
 
 class Item(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
@@ -23,7 +23,12 @@ class Item(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
     price: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
     description: Mapped[str | None] = mapped_column(Text)
 
-    inventories: Mapped[list["Inventory"]] = relationship(
+    character_items: Mapped[list["CharacterItem"]] = relationship(
         back_populates="item",
         passive_deletes=True,
+    )
+
+    __table_args__ = (
+        CheckConstraint("weight is null or weight >= 0", name="ck_items_weight"),
+        CheckConstraint("cost_gp is null or cost_gp >= 0", name="ck_items_cost_gp"),
     )
