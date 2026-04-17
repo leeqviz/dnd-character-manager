@@ -25,7 +25,7 @@ class UsersService:
         await self.repo.create(new_user)
         await self.session.commit()
         # await self.session.refresh(new_user)
-        return new_user
+        return UserOut.model_validate(new_user)
 
     async def update(self, user_id: UUID, user: UserIn):
 
