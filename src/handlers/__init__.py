@@ -1,11 +1,9 @@
-import logging
-
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from sqlalchemy.exc import DatabaseError
 
-from src.core import AppException
+from src.core import AppException, logging
 
 log = logging.getLogger(__name__)
 

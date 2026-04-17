@@ -1,3 +1,6 @@
+import logging
+import sys
+
 from fastapi import status
 
 
@@ -12,3 +15,12 @@ class AppException(Exception):
         self.status_code = status_code
         self.error_code = error_code
         super().__init__(self.message)
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)  # вывод в консоль
+    ],
+)
