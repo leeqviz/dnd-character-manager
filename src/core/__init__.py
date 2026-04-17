@@ -17,10 +17,10 @@ class AppException(Exception):
         super().__init__(self.message)
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stdout)  # вывод в консоль
-    ],
-)
+def configure_logging():
+    logging.basicConfig(
+        level=logging.DEBUG,
+        datefmt="%Y-%m-%d %H:%M:%S",
+        format="[%(asctime)s.%(msecs)03d] %(module)12s:%(lineno)-4d %(levelname)-8s %(name)s - %(message)s",
+        handlers=[logging.StreamHandler(sys.stdout)],
+    )

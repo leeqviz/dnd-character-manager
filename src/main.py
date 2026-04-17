@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 from sqlalchemy.exc import DatabaseError
 
-from src.core import AppException
+from src.core import AppException, configure_logging
 from src.handlers import (
     app_error_handler,
     database_error_handler,
@@ -17,6 +17,8 @@ from src.middlewares import LogRequestMiddleware, ResponseTimeMiddleware
 from .configs import settings
 from .db import psql_conn
 from .routers import api_router
+
+configure_logging()
 
 
 @asynccontextmanager

@@ -1,9 +1,8 @@
+import logging
 from collections.abc import Awaitable, Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-
-from src.core import logging
 
 log = logging.getLogger(__name__)
 
