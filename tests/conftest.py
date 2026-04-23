@@ -1,8 +1,10 @@
 import os
+import subprocess
 
 # Set ENV_STATE to "test" to use test database with .env.test
 os.environ["ENV_STATE"] = "test"
 
+import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
@@ -19,6 +21,16 @@ psql_test_conn = DatabaseConnection(
     pool_size=settings.postgres.pool_size,
     max_overflow=settings.postgres.max_overflow,
 )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def apply_migrations():
+    env = os.environ.copy()
+    env["ENV_STATE"] = "test"
+    # subprocess.run(["alembic", "stamp", "head"], check=True, env=env)
+    subprocess.run(["alembic", "downgrade", "base"], check=False, env=env)
+    subprocess.run(["alembic", "upgrade", "head"], check=True, env=env)
+    return
 
 
 @pytest_asyncio.fixture(name="db_session")
