@@ -18,8 +18,3 @@ class UserOut(UserSchema):
 
 class UserIn(UserSchema):
     pass
-
-
-class UserAuth(UserSchema):
-    is_active: bool = True
-    model_config = ConfigDict(strict=True)

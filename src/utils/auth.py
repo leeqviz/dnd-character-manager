@@ -1,7 +1,10 @@
+from datetime import timedelta
+
 import bcrypt
 import jwt
 
 from src.configs import settings
+from src.utils import timestamp_with_tz
 
 
 def encode_jwt(
@@ -11,6 +14,22 @@ def encode_jwt(
 ):
     encoded = jwt.encode(payload, private_key, algorithm=algorithm)
     return encoded
+
+
+def create_access_token(
+    payload: dict,
+    expires_in: int = settings.jwt.access_token_expire_minutes,
+    expires_delta: timedelta | None = None,
+):
+    now = timestamp_with_tz
+    expire = now + (expires_delta or timedelta(minutes=expires_in))
+
+    to_encode = {
+        "sub": payload,
+        "exp": expire,
+        "iat": now,
+    }
+    return encode_jwt(to_encode)
 
 
 def decode_jwt(

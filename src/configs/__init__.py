@@ -26,7 +26,7 @@ class JWTConfig(BaseModel):
 
     secret: str | None = None
     algorithm: str = "RS256"
-    access_token_expire_minutes: int = 30
+    access_token_expire_minutes: int = 5
 
 
 class CORSConfig(BaseModel):

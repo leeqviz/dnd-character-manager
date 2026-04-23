@@ -16,6 +16,13 @@ class UsersRepository:
     async def get_by_id(self, user_id: UUID):
         return await self.session.get(User, user_id)
 
+    async def get_by_name_and_email(self, name: str, email: str):
+        return (
+            await self.session.scalars(
+                select(User).where(User.name == name and User.email == email)
+            )
+        ).first()
+
     async def create(self, user: User):
         self.session.add(user)
 
