@@ -4,6 +4,7 @@ from uuid import UUID
 from sqlalchemy import (
     ForeignKey,
     Text,
+    UniqueConstraint,
     Uuid,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -34,3 +35,7 @@ class UserRole(Created_At_Mixin, Updated_At_Mixin, Base):
 
     user: Mapped["User"] = relationship(back_populates="user_roles")
     role: Mapped["Role"] = relationship(back_populates="user_roles")
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "role_id", name="uq_user_roles_user_id_role_id"),
+    )

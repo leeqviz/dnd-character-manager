@@ -16,6 +16,12 @@ class ApiConfig(BaseModel):
     message: str = "Welcome to DnD Character Manager API"
 
 
+class JWTConfig(BaseModel):
+    secret: str | None = None
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+
+
 class CORSConfig(BaseModel):
     origins: list = ["*"]
     methods: list = ["*"]
@@ -61,6 +67,7 @@ class Settings(BaseSettings):
 
     app: AppConfig = AppConfig()
     api: ApiConfig = ApiConfig()
+    jwt: JWTConfig = JWTConfig()
     cors: CORSConfig = CORSConfig()
     postgres: PostgresConfig = PostgresConfig()
 

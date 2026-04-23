@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from . import Base
@@ -13,6 +14,7 @@ class Role(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
     __tablename__ = "roles"
 
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
+    description: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     user_roles: Mapped[list["UserRole"]] = relationship(
         back_populates="role",
