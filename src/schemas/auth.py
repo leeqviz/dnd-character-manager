@@ -3,6 +3,12 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 
+class LoginRequest(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
+
 class LoginSchema(BaseModel):
     id: UUID
     name: str

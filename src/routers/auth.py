@@ -1,17 +1,22 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.configs import settings
 from src.db import get_psql_session
-from src.schemas.auth import LoginSchema, MeSchema, TokenSchema
+from src.schemas.auth import LoginRequest, LoginSchema, MeSchema, TokenSchema
 from src.services.auth import AuthService
 from src.utils.auth import decode_jwt, issue_access_token, validate_password
 
-http_bearer_scheme = HTTPBearer(auto_error=True)
+http_bearer_scheme = HTTPBearer(
+    bearerFormat="JWT",
+    scheme_name="JWTAuth",
+    description="JWT access token in the Authorization header",
+    auto_error=True,
+)
 auth_router = APIRouter()
 
 
@@ -22,19 +27,17 @@ def get_auth_service(
 
 
 async def validate_login(
+    payload: LoginRequest,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    name: str = Form(...),
-    email: str = Form(...),
-    password: str = Form(...),
 ) -> LoginSchema:
     unauth_ex = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Incorrect username, email or password",
     )
-    user = await auth_service.get_user_credentials(name, email)
+    user = await auth_service.get_user_credentials(payload.name, payload.email)
     if not user:
         raise unauth_ex
-    if not validate_password(password, user.password):
+    if not validate_password(payload.password, user.password):
         raise unauth_ex
     if not user.is_active:
         raise HTTPException(
