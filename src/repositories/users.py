@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.models.user import User
 
@@ -15,6 +16,15 @@ class UsersRepository:
 
     async def get_by_id(self, user_id: UUID):
         return await self.session.get(User, user_id)
+
+    async def get_with_roles(self, name: str, email: str):
+        return (
+            await self.session.scalars(
+                select(User)
+                .options(selectinload(User.roles))
+                .where(User.name == name and User.email == email)
+            )
+        ).first()
 
     async def create(self, user: User):
         self.session.add(user)

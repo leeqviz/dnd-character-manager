@@ -39,6 +39,26 @@ def format(c):
 
 
 @task
+def seed(c, force=False):
+    c.run(f"uv run python -m scripts.seed {force and '--force'}")
+
+
+@task
+def revision(c, name="New revision"):
+    c.run(f'uv run alembic revision --autogenerate -m "{name}"')
+
+
+@task
+def upgrade(c, target="head"):
+    c.run(f"uv run alembic upgrade {target}")
+
+
+@task
+def downgrade(c, target="base"):
+    c.run(f"uv run alembic downgrade {target}")
+
+
+@task
 def clean(_):
     from os import path
     from shutil import rmtree

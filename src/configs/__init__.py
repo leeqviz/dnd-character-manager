@@ -1,10 +1,15 @@
+from pathlib import Path
+
 from pydantic import BaseModel, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from src.utils import env_file, in_container
 
+APP_PATH = Path(__file__).resolve().parent.parent.parent
+
 
 class AppConfig(BaseModel):
+    name: str = "DnD Character Manager"
     host: str = "127.0.0.1"
     port: int = 8000
     reload: bool = True
@@ -14,6 +19,16 @@ class AppConfig(BaseModel):
 class ApiConfig(BaseModel):
     prefix: str = "/api"
     message: str = "Welcome to DnD Character Manager API"
+
+
+class JWTConfig(BaseModel):
+    private_key_path: Path = APP_PATH / "certs" / "jwt" / "private.pem"
+    public_key_path: Path = APP_PATH / "certs" / "jwt" / "public.pem"
+
+    algorithm: str = "RS256"
+    token_type: str = "Bearer"
+    access_token_expire_minutes: int = 5
+    refresh_token_expire_minutes: int = 60 * 24
 
 
 class CORSConfig(BaseModel):
@@ -61,6 +76,7 @@ class Settings(BaseSettings):
 
     app: AppConfig = AppConfig()
     api: ApiConfig = ApiConfig()
+    jwt: JWTConfig = JWTConfig()
     cors: CORSConfig = CORSConfig()
     postgres: PostgresConfig = PostgresConfig()
 

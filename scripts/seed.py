@@ -8,31 +8,32 @@ from src.db import psql_conn
 from src.models import User
 from src.models.role import Role
 from src.models.user_role import UserRole
+from src.utils.auth import hash_password
 
 USERS_TO_SEED = [
     User(
         id=uuid4(),
         email="admin@example.com",
         name="admin",
-        password="admin_password",  # noqa: S106
+        password=hash_password("admin_password").decode(),
     ),
     User(
         id=uuid4(),
         email="master@example.com",
         name="master",
-        password="master_password",  # noqa: S106
+        password=hash_password("master_password").decode(),
     ),
     User(
         id=uuid4(),
         email="user@example.com",
         name="user",
-        password="user_password",  # noqa: S106
+        password=hash_password("user_password").decode(),
     ),
     User(
         id=uuid4(),
         email="guest@example.com",
         name="guest",
-        password="guest_password",  # noqa: S106
+        password=hash_password("guest_password").decode(),
     ),
 ]
 

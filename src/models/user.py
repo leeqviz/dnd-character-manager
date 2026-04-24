@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from sqlalchemy import Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from . import Base
@@ -7,6 +8,7 @@ from .mixins import Created_At_Mixin, Updated_At_Mixin, UUID_PK_Mixin
 
 if TYPE_CHECKING:
     from src.models.character import Character
+    from src.models.role import Role
     from src.models.user_role import UserRole
 
 
@@ -16,6 +18,7 @@ class User(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     characters: Mapped[list["Character"]] = relationship(
         back_populates="user",
@@ -25,6 +28,11 @@ class User(UUID_PK_Mixin, Created_At_Mixin, Updated_At_Mixin, Base):
     user_roles: Mapped[list["UserRole"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
+    )
+
+    roles: Mapped[list["Role"]] = relationship(
+        secondary="user_roles",
+        back_populates="users",
     )
 
     def __str__(self):
