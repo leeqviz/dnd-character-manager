@@ -1,3 +1,5 @@
+generate public and private keys and put them into certs/jwt/
+
 ```shell
 # gen private key for jwt
 openssl genrsa -out private.pem 2048
