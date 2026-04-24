@@ -9,9 +9,9 @@ from src.configs import settings
 from src.db import get_psql_session
 from src.schemas.auth import LoginSchema, MeSchema, TokenSchema
 from src.services.auth import AuthService
-from src.utils.auth import create_access_token, decode_jwt, validate_password
+from src.utils.auth import decode_jwt, issue_access_token, validate_password
 
-http_bearer = HTTPBearer()
+http_bearer_scheme = HTTPBearer(auto_error=True)
 auth_router = APIRouter()
 
 
@@ -26,12 +26,12 @@ async def validate_login(
     name: str = Form(...),
     email: str = Form(...),
     password: str = Form(...),
-):
+) -> LoginSchema:
     unauth_ex = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Incorrect username, email or password",
     )
-    user = await auth_service.get_by_name_and_email(name, email)
+    user = await auth_service.get_user_credentials(name, email)
     if not user:
         raise unauth_ex
     if not validate_password(password, user.password):
@@ -41,24 +41,32 @@ async def validate_login(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Inactive user",
         )
-    return LoginSchema.model_validate(user)
+    return user
 
 
 @auth_router.post("/login")
 async def login(user: Annotated[LoginSchema, Depends(validate_login)]) -> TokenSchema:
-    payload = {
+    claims = {
         "name": user.name,
         "email": user.email,
         "is_active": user.is_active,
+        # "roles": user.roles,
     }
-    token = create_access_token(payload)
+    token = issue_access_token(str(user.id), claims)
     return TokenSchema(access_token=token, token_type=settings.jwt.token_type)
 
 
 async def get_auth_user(
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer)],
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(http_bearer_scheme)],
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> MeSchema:
+    if credentials.scheme.lower() != "bearer":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication scheme",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     token = credentials.credentials
     try:
         payload = decode_jwt(token)
@@ -75,7 +83,7 @@ async def get_auth_user(
             detail="Inactive user",
         )
 
-    db_user = await auth_service.get_by_name_and_email(user.name, user.email)
+    db_user = await auth_service.get_user_credentials(user.name, user.email)
     if not db_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

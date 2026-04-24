@@ -9,6 +9,6 @@ class AuthService:
         self.session = session
         self.repo = UsersRepository(self.session)
 
-    async def get_by_name_and_email(self, name: str, email: str):
+    async def get_user_credentials(self, name: str, email: str):
         user = await self.repo.get_by_name_and_email(name, email)
         return LoginSchema.model_validate(user)

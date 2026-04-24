@@ -9,6 +9,7 @@ APP_PATH = Path(__file__).resolve().parent.parent.parent
 
 
 class AppConfig(BaseModel):
+    name: str = "DnD Character Manager"
     host: str = "127.0.0.1"
     port: int = 8000
     reload: bool = True
