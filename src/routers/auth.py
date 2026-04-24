@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +15,7 @@ from src.utils.auth import (
     issue_refresh_token,
     validate_password,
 )
+from src.utils.emailer import send_email
 
 http_bearer_scheme = HTTPBearer(
     bearerFormat="JWT",
@@ -53,7 +54,10 @@ async def validate_login(
 
 
 @auth_router.post("/login")
-async def login(user: Annotated[LoginSchema, Depends(validate_login)]) -> TokenSchema:
+async def login(
+    user: Annotated[LoginSchema, Depends(validate_login)],
+    background_tasks: BackgroundTasks,
+) -> TokenSchema:
     claims = {
         "name": user.name,
         "email": user.email,
@@ -62,6 +66,14 @@ async def login(user: Annotated[LoginSchema, Depends(validate_login)]) -> TokenS
     }
     access_token = issue_access_token(user.id, claims)
     refresh_token = issue_refresh_token(user.id, claims)
+
+    background_tasks.add_task(
+        send_email,
+        sender=settings.emailer.sender,
+        recipients=[user.email],
+        subject="Login Notification",
+        content="You have successfully logged in",
+    )
     return TokenSchema(
         access_token=access_token,
         refresh_token=refresh_token,
